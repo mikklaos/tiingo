@@ -30,5 +30,6 @@ ENV PORT=8000 \
 
 EXPOSE 8000
 
-# stdin from /dev/null keeps the HTTP gateway running in Docker
-CMD ["sh", "-c", "exec supergateway --stdio tiingo-mcp --outputTransport streamableHttp --stateful --port \"${PORT:-8000}\" < /dev/null"]
+# Stateless Streamable HTTP — Claude.ai remote connectors do not reliably
+# send Mcp-Session-Id across tool calls (--stateful causes HTTP 400 -32000).
+CMD ["sh", "-c", "exec supergateway --stdio tiingo-mcp --outputTransport streamableHttp --port \"${PORT:-8000}\" < /dev/null"]
