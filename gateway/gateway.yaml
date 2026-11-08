@@ -1,0 +1,61 @@
+server:
+  host: 0.0.0.0
+  port: 8788
+  logLevel: info
+
+admin:
+  enabled: true
+  port: 8789
+  host: 0.0.0.0
+  # Direct HTTP on Coolify private network / SSH tunnel for first bootstrap
+  insecureAllowHttpCookies: true
+  sessionTtlSeconds: 28800
+  maxLoginAttemptsPerHour: 10
+  loginLockoutSeconds: 900
+
+diagnostics:
+  enabled: false
+  tokenEnv: GATEWAY_DIAGNOSTICS_TOKEN
+
+oauth:
+  enabled: true
+  issuer: https://gpt.lahke.net
+  insecureAllowHttpIssuer: false
+  accessTokenTtlSeconds: 900
+  refreshTokenTtlSeconds: 2592000
+  authorizationCodeTtlSeconds: 300
+  authorizationTransactionTtlSeconds: 600
+  dynamicRegistrationLimitPerHour: 20
+  loginLimitPerHour: 10
+  loginLockoutSeconds: 900
+  staticClients: []
+
+security:
+  publicOrigin: https://gpt.lahke.net
+  insecureAllowHttpPublicOrigin: false
+  allowedHosts:
+    - gpt.lahke.net
+  trustedProxies:
+    - 10.0.2.0/24
+  allowPrivateUpstreamsOnly: true
+  requireAuth: true
+  insecureAllowUnauthenticatedMcp: false
+  bodyLimitBytes: 1048576
+  jsonResponseLimitBytes: 4194304
+  maxConcurrentRequests: 100
+  maxConcurrentStreams: 20
+  sseMaxDurationMs: 300000
+  upstreamConnectTimeoutMs: 5000
+  upstreamHeadersTimeoutMs: 10000
+  upstreamBodyTimeoutMs: 60000
+  upstreamResponseHeaderLimitBytes: 16384
+
+tools:
+  # Tiingo tools include start_/stop_/update_ subscription names — do not use default deny list
+  defaultDenyDangerousTools: false
+  allow: []
+  deny: []
+
+routes:
+  - path: /tiingo
+    upstream: http://tiingo-mcp:8000

@@ -1,0 +1,35 @@
+services:
+  mcp-edge-gateway:
+    image: ghcr.io/x10send/mcp-edge-gateway:latest
+    container_name: mcp-edge-gateway
+    restart: unless-stopped
+    networks:
+      - coolify
+    volumes:
+      - ./gateway.yaml:/config/gateway.yaml:ro
+      - ./state:/config/state
+    ports:
+      # Admin UI only via SSH tunnel: ssh -L 8789:127.0.0.1:8789 root@lahke.net
+      - "127.0.0.1:8789:8789"
+    expose:
+      - "8788"
+    labels:
+      - traefik.enable=true
+      - traefik.http.middlewares.gzip.compress=true
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.routers.mcp-gw-http.entryPoints=http
+      - traefik.http.routers.mcp-gw-http.rule=Host(`gpt.lahke.net`)
+      - traefik.http.routers.mcp-gw-http.middlewares=redirect-to-https
+      - traefik.http.routers.mcp-gw-https.entryPoints=https
+      - traefik.http.routers.mcp-gw-https.rule=Host(`gpt.lahke.net`)
+      - traefik.http.routers.mcp-gw-https.tls=true
+      - traefik.http.routers.mcp-gw-https.tls.certresolver=letsencrypt
+      - traefik.http.routers.mcp-gw-https.middlewares=gzip
+      - traefik.http.routers.mcp-gw-https.service=mcp-gw
+      - traefik.http.services.mcp-gw.loadbalancer.server.port=8788
+      - coolify.managed=true
+      - coolify.name=mcp-edge-gateway
+
+networks:
+  coolify:
+    external: true
