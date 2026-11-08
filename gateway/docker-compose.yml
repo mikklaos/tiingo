@@ -10,6 +10,7 @@ services:
       - ./state:/config/state
       # Patches ChatGPT CIMD (private_key_jwt) + undici all:true DNS lookup
       - ./patches/oauth-authorization-server.js:/app/dist/oauth-authorization-server.js:ro
+      - ./patches/upstream-dispatcher.js:/app/dist/upstream-dispatcher.js:ro
     ports:
       # Admin UI only via SSH tunnel: ssh -L 8789:127.0.0.1:8789 root@lahke.net
       - "127.0.0.1:8789:8789"
